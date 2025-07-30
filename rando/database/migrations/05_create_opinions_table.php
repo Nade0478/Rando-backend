@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('opinions', function (Blueprint $table) {
             $table->id();
+            $table->string('title_opinion');
+            $table->text('content_opinion');
+            $table->integer('note_opinion');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('place_id');
             $table->timestamps();
         });
     }
