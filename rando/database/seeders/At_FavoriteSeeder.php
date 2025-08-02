@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\At_Favorite;
 
 class At_FavoriteSeeder extends Seeder
 {
@@ -12,6 +13,6 @@ class At_FavoriteSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        At_Favorite::factory()->count(50)->create();
     }
 }
