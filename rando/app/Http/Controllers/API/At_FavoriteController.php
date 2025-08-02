@@ -13,7 +13,9 @@ class At_FavoriteController extends Controller
      */
     public function index()
     {
-        //
+        $at_Favorites = At_Favorite::with(['place', 'user'])->paginate(50);
+        return response()->json($at_Favorites, 200);
+
     }
 
     /**
@@ -21,7 +23,17 @@ class At_FavoriteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'place_id' => ['required', 'integer'],
+            'user_id' => ['required', 'integer'],
+        ]);
+
+        $at_Favorite = At_Favorite::create($validatedData);
+
+        return response()->json([
+            'status' => 'Success',
+            'data' => $at_Favorite,
+        ], 201);
     }
 
     /**
@@ -29,7 +41,8 @@ class At_FavoriteController extends Controller
      */
     public function show(At_Favorite $at_Favorite)
     {
-        //
+        return response()->json($at_Favorite, 200);
+
     }
 
     /**
@@ -37,7 +50,14 @@ class At_FavoriteController extends Controller
      */
     public function update(Request $request, At_Favorite $at_Favorite)
     {
-        //
+        $validatedData = $request->validate([
+            'place_id' => ['required', 'integer'],
+            'user_id' => ['required', 'integer'],
+        ]);
+
+        $at_Favorite->update($validatedData);
+
+        return response()->json($at_Favorite, 200);
     }
 
     /**
@@ -45,6 +65,8 @@ class At_FavoriteController extends Controller
      */
     public function destroy(At_Favorite $at_Favorite)
     {
-        //
+        $at_Favorite->delete();
+
+        return response()->json(null, 204);
     }
 }
