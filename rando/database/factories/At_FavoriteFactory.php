@@ -18,18 +18,13 @@ class At_FavoriteFactory extends Factory
     {
         return [
             'user_id' => $this->faker->numberBetween(1, 10),
-            'article_id' => $this->faker->numberBetween(1, 50),
+            'place_id' => $this->faker->numberBetween(1, 50),
+            'is_favorite' => $this->faker->boolean(80), // 80% de chances que ce soit un favori
+            'rating' => $this->faker->optional()->numberBetween(1, 5), // note entre 1 et 5
+            'comment' => $this->faker->optional()->sentence(), // commentaire aléatoire
             'created_at' => now(),
             'updated_at' => now(),
-            'deleted_at' => null,
-            'is_favorite' => $this->faker->boolean(50), // 50% chance of being true or false
-            'is_read' => $this->faker->boolean(50), // 50% chance of being true or false
-            'is_shared' => $this->faker->boolean(50), // 50% chance of being true or false
-            'is_liked' => $this->faker->boolean(50), // 50% chance of being true or false
-            'is_bookmarked' => $this->faker->boolean(50), // 50% chance of being true or false
-            'is_commented' => $this->faker->boolean(50), // 50% chance of being true or false
-            'is_reported' => $this->faker->boolean(50), // 50% chance of being true or false
-            'is_flagged' => $this->faker->boolean(50), // 50% chance of being true or false 
         ];
     }
 }
+

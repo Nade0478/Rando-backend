@@ -16,35 +16,35 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         Category::create([
-            'name_category' => 'Historique',
+            'name' => 'Historique',
         ]);
 
         Category::create([
-            'name_category' => 'Nature et Faune',
+            'name' => 'Nature et Faune',
         ]);
 
         Category::create([
-            'name_category' => 'Familial',
+            'name' => 'Familial',
         ]);
 
         Category::create([
-            'name_category' => 'Aventure et Sports',
+            'name' => 'Aventure et Sports',
         ]);
 
         Category::create([
-            'name_category' => 'Économie et Culture',
+            'name' => 'Économie et Culture',
         ]);
 
         Category::create([
-            'name_category' => 'Sciences et Techniques',
+            'name' => 'Sciences et Techniques',
         ]);
 
         Category::create([
-            'name_category' => 'Gastronomique',
+            'name' => 'Gastronomique',
         ]);
 
         Category::create([
-            'name_category' => 'categorie name',
+            'name' => 'categorie name',
         ]);
 
         Category::factory(5)->create();

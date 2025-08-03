@@ -7,8 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class At_Favorite extends Model
 {
     protected $table = 'at_favorites';
-    protected $fillable = ['user_id', 'place_id'];
 
+    // Ajoute tous les champs modifiables
+    protected $fillable = [
+        'user_id',
+        'place_id',
+        'is_favorite',
+        'rating',
+        'comment',
+    ];
+
+    // Relations
     public function user()
     {
         return $this->belongsTo(User::class);

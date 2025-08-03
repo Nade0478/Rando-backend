@@ -15,7 +15,6 @@ class At_FavoriteController extends Controller
     {
         $at_Favorites = At_Favorite::with(['place', 'user'])->paginate(50);
         return response()->json($at_Favorites, 200);
-
     }
 
     /**
@@ -24,8 +23,11 @@ class At_FavoriteController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'place_id' => ['required', 'integer'],
-            'user_id' => ['required', 'integer'],
+            'place_id' => ['required', 'integer', 'exists:places,id'],
+            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'is_favorite' => ['nullable', 'boolean'],
+            'rating' => ['nullable', 'integer', 'min:1', 'max:5'],
+            'comment' => ['nullable', 'string'],
         ]);
 
         $at_Favorite = At_Favorite::create($validatedData);
@@ -41,8 +43,7 @@ class At_FavoriteController extends Controller
      */
     public function show(At_Favorite $at_Favorite)
     {
-        return response()->json($at_Favorite, 200);
-
+        return response()->json($at_Favorite->load(['place', 'user']), 200);
     }
 
     /**
@@ -51,13 +52,17 @@ class At_FavoriteController extends Controller
     public function update(Request $request, At_Favorite $at_Favorite)
     {
         $validatedData = $request->validate([
-            'place_id' => ['required', 'integer'],
-            'user_id' => ['required', 'integer'],
+            'is_favorite' => ['nullable', 'boolean'],
+            'rating' => ['nullable', 'integer', 'min:1', 'max:5'],
+            'comment' => ['nullable', 'string'],
         ]);
 
         $at_Favorite->update($validatedData);
 
-        return response()->json($at_Favorite, 200);
+        return response()->json([
+            'status' => 'Updated',
+            'data' => $at_Favorite,
+        ], 200);
     }
 
     /**
