@@ -9,7 +9,7 @@ use Database\Seeders\ArticleSeeder;
 use Database\Seeders\OpinionSeeder;
 use Database\Seeders\CategorySeeder;
 use Database\Seeders\PlaceSeeder;
-use Database\Seeders\At_FavoriteSeeder;
+use Database\Seeders\FavoriteSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
             ArticleSeeder::class,
             OpinionSeeder::class,
             PlaceSeeder::class,
-            At_FavoriteSeeder::class,
+            FavoriteSeeder::class,
         ]);
 
         // User::factory()->create([

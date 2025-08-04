@@ -10,21 +10,11 @@ use Carbon\Carbon;
 class PlaceController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Affiche tous les lieux.
      */
     public function index()
     {
-        $places = Place::all()->map(function ($place) {
-            $place->estimated_time_place = Carbon::parse($place->estimated_time_place)->format('H:i');
-            return $place;
-        });
-
-        return response()->json($places, 200);
-    }
-
-    public function indexHome()
-    {
-        $places = Place::limit(3)->orderBy('created_at', 'desc')->get()->map(function ($place) {
+        $places = Place::with('favorites')->get()->map(function ($place) {
             $place->estimated_time_place = Carbon::parse($place->estimated_time_place)->format('H:i');
             return $place;
         });
@@ -33,7 +23,20 @@ class PlaceController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Affiche les 3 derniers lieux pour la page d’accueil.
+     */
+    public function indexHome()
+    {
+        $places = Place::with('favorites')->limit(3)->orderBy('created_at', 'desc')->get()->map(function ($place) {
+            $place->estimated_time_place = Carbon::parse($place->estimated_time_place)->format('H:i');
+            return $place;
+        });
+
+        return response()->json($places, 200);
+    }
+
+    /**
+     * Enregistre un nouveau lieu.
      */
     public function store(Request $request)
     {
@@ -49,10 +52,8 @@ class PlaceController extends Controller
             'map_place' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:10000'],
         ]);
 
-        // Formater l'heure sans secondes
         $validatedData['estimated_time_place'] = Carbon::createFromFormat('H:i', $validatedData['estimated_time_place'])->format('H:i');
 
-        // Gestion des fichiers
         $filename = null;
         if ($request->hasFile('image_place')) {
             $filename = time() . '_' . $request->file('image_place')->getClientOriginalName();
@@ -77,18 +78,38 @@ class PlaceController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Affiche un lieu avec ses commentaires et sa note moyenne.
      */
     public function show(Place $place)
     {
-        // Formater l'heure avant de renvoyer la réponse
         $place->estimated_time_place = Carbon::parse($place->estimated_time_place)->format('H:i');
 
-        return response()->json($place, 200);
+        // Charger les commentaires et utilisateurs
+        $place->load(['favorites.user']);
+
+        // Calculer la moyenne des notes
+        $averageRating = $place->favorites()->whereNotNull('rating')->avg('rating');
+        $place->average_rating = $averageRating ? round($averageRating, 1) : null;
+
+        // Préparer les commentaires
+        $comments = $place->favorites->whereNotNull('comment')->map(function ($fav) {
+            return [
+                'user' => $fav->user->name ?? 'Utilisateur',
+                'comment' => $fav->comment,
+                'rating' => $fav->rating,
+                'date' => $fav->created_at->format('d/m/Y'),
+            ];
+        });
+
+        return response()->json([
+            'place' => $place,
+            'average_rating' => $place->average_rating,
+            'comments' => $comments,
+        ], 200);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Met à jour un lieu existant.
      */
     public function update(Request $request, Place $place)
     {
@@ -104,10 +125,8 @@ class PlaceController extends Controller
             'map_place' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:10000'],
         ]);
 
-        // Formater l'heure sans secondes
         $validatedData['estimated_time_place'] = Carbon::createFromFormat('H:i', $validatedData['estimated_time_place'])->format('H:i');
 
-        // Gestion des fichiers : conserver l’ancien fichier si aucun nouveau n'est uploadé
         $filename = $place->image_place;
         if ($request->hasFile('image_place')) {
             $filename = time() . '_' . $request->file('image_place')->getClientOriginalName();
@@ -132,7 +151,7 @@ class PlaceController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Supprime un lieu.
      */
     public function destroy(Place $place)
     {

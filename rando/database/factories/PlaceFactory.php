@@ -18,13 +18,13 @@ class PlaceFactory extends Factory
     public function definition(): array
     {
         return [
-            'name_place' => $this->faker->name,
-            'description_place' => $this->faker->text,
-            'latitude_place' => $this->faker->latitude(-90, 90),
-            'longitude_place' => $this->faker->longitude(-180, 180),
-            'image_place' => $this->faker->imageUrl(640, 480, 'articles', true),
-            'map_place' => $this->faker->imageUrl(640, 480, 'articles', true),
-            'distance_place' => $this->faker->randomFloat(2, 0, 100),
+            'name_place' => $this->faker->words(3, true),
+            'description_place' => $this->faker->text(300),
+            'latitude_place' => $this->faker->latitude(),
+            'longitude_place' => $this->faker->longitude(),
+            'image_place' => $this->faker->imageUrl(640, 480, 'nature', true),
+            'map_place' => $this->faker->imageUrl(640, 480, 'maps', true),
+            'distance_place' => $this->faker->randomFloat(1, 1, 25),
             'difficulty_place' => $this->faker->randomElement(['Facile', 'Moyen', 'Difficile']),
             'estimated_time_place' => Carbon::createFromFormat('H:i:s', $this->faker->time())->format('H:i'),
         ];

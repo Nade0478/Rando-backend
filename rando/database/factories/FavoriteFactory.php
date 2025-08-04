@@ -1,0 +1,24 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Favorite;
+use App\Models\User;
+use App\Models\Place;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class FavoriteFactory extends Factory
+{
+    protected $model = Favorite::class;
+
+    public function definition(): array
+    {
+        return [
+            'user_id' => User::factory(),
+            'place_id' => Place::factory(),
+            'comment' => $this->faker->sentence,
+            'rating' => $this->faker->numberBetween(1, 5),
+            'is_favorite' => true,
+        ];
+    }
+}

@@ -2,22 +2,25 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Place;
+use App\Models\User;
 
-class At_Favorite extends Model
+class Favorite extends Model
 {
-    protected $table = 'at_favorites';
+    use HasFactory;
 
-    // Ajoute tous les champs modifiables
+    protected $table = 'favorites';
+
     protected $fillable = [
         'user_id',
         'place_id',
-        'is_favorite',
-        'rating',
         'comment',
+        'rating',
+        'is_favorite',
     ];
 
-    // Relations
     public function user()
     {
         return $this->belongsTo(User::class);
