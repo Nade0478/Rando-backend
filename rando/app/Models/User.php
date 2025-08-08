@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use App\Models\Place;
 use App\Models\Favorite;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
@@ -27,7 +28,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            //'password' => 'hashed',
         ];
     }
 
@@ -42,8 +43,24 @@ class User extends Authenticatable
     /**
      * Favoris de l'utilisateur
      */
-    public function Favorites()
+    public function favorites()
     {
         return $this->belongsToMany(Favorite::class);
+    }
+
+    /**
+     * JWT : identifiant unique
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * JWT : claims personnalisés
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }
