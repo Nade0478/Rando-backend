@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Place;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class PlaceController extends Controller
 {
@@ -26,10 +27,14 @@ class PlaceController extends Controller
      */
     public function indexHome()
     {
-        $places = Place::with('favorites')->limit(3)->orderBy('created_at', 'desc')->get()->map(function ($place) {
-            $place->estimated_time_place = Carbon::parse($place->estimated_time_place)->format('H:i');
-            return $place;
-        });
+        $places = Place::with('favorites')
+            ->latest()
+            ->limit(3)
+            ->get()
+            ->map(function ($place) {
+                $place->estimated_time_place = Carbon::parse($place->estimated_time_place)->format('H:i');
+                return $place;
+            });
 
         return response()->json($places, 200);
     }
@@ -47,28 +52,31 @@ class PlaceController extends Controller
             'distance_place' => ['required', 'numeric'],
             'difficulty_place' => ['required', 'in:Facile,Moyen,Difficile'],
             'estimated_time_place' => ['required', 'date_format:H:i'],
-            'image_place' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:10000'],
-            'map_place' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:10000'],
+            'image_place' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:10000'],
+            'map_place' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:10000'],
         ]);
 
         $validatedData['estimated_time_place'] = Carbon::createFromFormat('H:i', $validatedData['estimated_time_place'])->format('H:i');
 
-        $filename = null;
+        $imageFilename = null;
         if ($request->hasFile('image_place')) {
-            $filename = time() . '_' . $request->file('image_place')->getClientOriginalName();
-            $request->file('image_place')->storeAs('public/uploads', $filename);
+            $imageFilename = pathinfo($request->file('image_place')->getClientOriginalName(), PATHINFO_FILENAME)
+                            . '_' . time() . '.' . $request->file('image_place')->getClientOriginalExtension();
+            $request->file('image_place')->storeAs('public/uploads', $imageFilename);
         }
 
-        $map_place = null;
+        $mapFilename = null;
         if ($request->hasFile('map_place')) {
-            $map_place = time() . '_' . $request->file('map_place')->getClientOriginalName();
-            $request->file('map_place')->storeAs('public/uploads', $map_place);
+            $mapFilename = pathinfo($request->file('map_place')->getClientOriginalName(), PATHINFO_FILENAME)
+                          . '_' . time() . '.' . $request->file('map_place')->getClientOriginalExtension();
+            $request->file('map_place')->storeAs('public/uploads', $mapFilename);
         }
 
-        $place = Place::create(array_merge(
-            $validatedData,
-            ['image_place' => $filename, 'map_place' => $map_place]
-        ));
+        $place = Place::create([
+            ...$validatedData,
+            'image_place' => $imageFilename,
+            'map_place' => $mapFilename,
+        ]);
 
         return response()->json([
             'status' => 'Success',
@@ -82,15 +90,11 @@ class PlaceController extends Controller
     public function show(Place $place)
     {
         $place->estimated_time_place = Carbon::parse($place->estimated_time_place)->format('H:i');
-
-        // Charger les commentaires et utilisateurs
         $place->load(['favorites.user']);
 
-        // Calculer la moyenne des notes
         $averageRating = $place->favorites()->whereNotNull('rating')->avg('rating');
         $place->average_rating = $averageRating ? round($averageRating, 1) : null;
 
-        // Préparer les commentaires
         $comments = $place->favorites->whereNotNull('comment')->map(function ($fav) {
             return [
                 'user' => $fav->user->name ?? 'Utilisateur',
@@ -120,28 +124,31 @@ class PlaceController extends Controller
             'distance_place' => ['required', 'numeric'],
             'difficulty_place' => ['required', 'in:Facile,Moyen,Difficile'],
             'estimated_time_place' => ['required', 'date_format:H:i'],
-            'image_place' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:10000'],
-            'map_place' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:10000'],
+            'image_place' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:10000'],
+            'map_place' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:10000'],
         ]);
 
         $validatedData['estimated_time_place'] = Carbon::createFromFormat('H:i', $validatedData['estimated_time_place'])->format('H:i');
 
-        $filename = $place->image_place;
+        $imageFilename = $place->image_place;
         if ($request->hasFile('image_place')) {
-            $filename = time() . '_' . $request->file('image_place')->getClientOriginalName();
-            $request->file('image_place')->storeAs('public/uploads', $filename);
+            $imageFilename = pathinfo($request->file('image_place')->getClientOriginalName(), PATHINFO_FILENAME)
+                            . '_' . time() . '.' . $request->file('image_place')->getClientOriginalExtension();
+            $request->file('image_place')->storeAs('public/uploads', $imageFilename);
         }
 
-        $map_place = $place->map_place;
+        $mapFilename = $place->map_place;
         if ($request->hasFile('map_place')) {
-            $map_place = time() . '_' . $request->file('map_place')->getClientOriginalName();
-            $request->file('map_place')->storeAs('public/uploads', $map_place);
+            $mapFilename = pathinfo($request->file('map_place')->getClientOriginalName(), PATHINFO_FILENAME)
+                          . '_' . time() . '.' . $request->file('map_place')->getClientOriginalExtension();
+            $request->file('map_place')->storeAs('public/uploads', $mapFilename);
         }
 
-        $place->update(array_merge(
-            $validatedData,
-            ['image_place' => $filename, 'map_place' => $map_place]
-        ));
+        $place->update([
+            ...$validatedData,
+            'image_place' => $imageFilename,
+            'map_place' => $mapFilename,
+        ]);
 
         return response()->json([
             'status' => 'Success',

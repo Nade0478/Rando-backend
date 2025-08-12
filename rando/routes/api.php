@@ -2,12 +2,12 @@
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\FavoriteController;
-use App\Http\Controllers\OpinionController;
-use App\Http\Controllers\PlaceController;
-use App\Http\Controllers\RoleController;
+use App\Http\Controllers\Api\ArticleController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\FavoriteController;
+use App\Http\Controllers\Api\OpinionController;
+use App\Http\Controllers\Api\PlaceController;
+use App\Http\Controllers\Api\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -63,8 +63,9 @@ Route::apiResource('roles', RoleController::class);
 // Accessible à tous
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-//Seulement accessible via le JWT
-Route::middleware('auth:api')->group(function() {
-Route::get('/currentuser', [UserController::class, 'currentUser']);
-Route::post('/logout', [AuthController::class, 'logout']);
+
+// Seulement accessible via le JWT
+Route::middleware('auth:api')->group(function () {
+    Route::get('/currentuser', [UserController::class, 'currentUser']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
