@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\CategoryController;
@@ -10,6 +10,12 @@ use App\Http\Controllers\Api\PlaceController;
 use App\Http\Controllers\Api\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ImageController;
+
+
+//Route image
+Route::post('/upload-image', [ImageController::class, 'upload']);
+
 
 // Route protégée pour récupérer l'utilisateur connecté
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

@@ -9,16 +9,16 @@ use Illuminate\Http\Request;
 class FavoriteController extends Controller
 {
     /**
-     * Affiche tous les favoris avec les relations.
+     * Affiche tous les favoris avec leurs relations.
      */
     public function index()
     {
-        $Favorites = Favorite::with(['place', 'user'])->paginate(50);
-        return response()->json($Favorites, 200);
+        $favorites = Favorite::with(['place', 'user'])->paginate(50);
+        return response()->json($favorites, 200);
     }
 
     /**
-     * Ajoute un favori avec données supplémentaires.
+     * Ajoute un nouveau favori.
      */
     public function store(Request $request)
     {
@@ -30,11 +30,11 @@ class FavoriteController extends Controller
             'comment' => ['nullable', 'string'],
         ]);
 
-        $Favorite = Favorite::create($validatedData);
+        $favorite = Favorite::create($validatedData);
 
         return response()->json([
             'status' => 'Success',
-            'data' => $Favorite,
+            'data' => $favorite,
         ], 201);
     }
 
@@ -75,7 +75,7 @@ class FavoriteController extends Controller
     }
 
     /**
-     * ✅ Liker ou déliker un lieu rapidement.
+     * Ajoute ou retire un favori selon son existence.
      */
     public function toggleFavorite(Request $request)
     {
@@ -91,18 +91,22 @@ class FavoriteController extends Controller
         if ($favorite) {
             $favorite->delete();
             return response()->json(['message' => 'Lieu retiré des favoris'], 200);
-        } else {
-            $newFavorite = Favorite::create([
-                'user_id' => $validated['user_id'],
-                'place_id' => $validated['place_id'],
-                'is_favorite' => true,
-            ]);
-            return response()->json(['message' => 'Lieu ajouté aux favoris', 'data' => $newFavorite], 201);
         }
+
+        $newFavorite = Favorite::create([
+            'user_id' => $validated['user_id'],
+            'place_id' => $validated['place_id'],
+            'is_favorite' => true,
+        ]);
+
+        return response()->json([
+            'message' => 'Lieu ajouté aux favoris',
+            'data' => $newFavorite,
+        ], 201);
     }
 
     /**
-     * ✅ Affiche les favoris d’un utilisateur.
+     * Liste des favoris d’un utilisateur.
      */
     public function userFavorites($userId)
     {
@@ -115,7 +119,7 @@ class FavoriteController extends Controller
     }
 
     /**
-     * ✅ Affiche tous les commentaires d’un lieu.
+     * Liste des commentaires associés à un lieu.
      */
     public function placeComments($placeId)
     {
