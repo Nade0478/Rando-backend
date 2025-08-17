@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             OpinionSeeder::class,
             PlaceSeeder::class,
             FavoriteSeeder::class,
+            ImageSeeder::class
         ]);
 
         // User::factory()->create([

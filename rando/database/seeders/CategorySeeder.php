@@ -14,40 +14,25 @@ class CategorySeeder extends Seeder
      * Run the database seeds.
      */
     public function run(): void
-    {
-        Category::create([
-            'name' => 'Historique',
-        ]);
+{
+    $categories = [
+        'Historique',
+        'Nature et Faune',
+        'Familial',
+        'Aventure et Sports',
+        'Économie et Culture',
+        'Sciences et Techniques',
+        'Gastronomique',
+    ];
 
-        Category::create([
-            'name' => 'Nature et Faune',
-        ]);
-
-        Category::create([
-            'name' => 'Familial',
-        ]);
-
-        Category::create([
-            'name' => 'Aventure et Sports',
-        ]);
-
-        Category::create([
-            'name' => 'Économie et Culture',
-        ]);
-
-        Category::create([
-            'name' => 'Sciences et Techniques',
-        ]);
-
-        Category::create([
-            'name' => 'Gastronomique',
-        ]);
-
-        Category::create([
-            'name' => 'categorie name',
-        ]);
-
-        Category::factory(5)->create();
+    foreach ($categories as $name) {
+        Category::create(['name' => $name]);
     }
+
+    // Génère 5 catégories aléatoires avec des noms uniques
+    fake()->unique(true); // reset le générateur unique
+    Category::factory(5)->create();
+}
+
 }
 

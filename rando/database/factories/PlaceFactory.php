@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,15 +19,16 @@ class PlaceFactory extends Factory
     public function definition(): array
     {
         return [
-            'name_place' => $this->faker->words(3, true),
-            'description_place' => $this->faker->text(300),
-            'latitude_place' => $this->faker->latitude(),
-            'longitude_place' => $this->faker->longitude(),
-            'image_place' => $this->faker->imageUrl(640, 480, 'nature', true),
-            'map_place' => $this->faker->imageUrl(640, 480, 'maps', true),
-            'distance_place' => $this->faker->randomFloat(1, 1, 25),
-            'difficulty_place' => $this->faker->randomElement(['Facile', 'Moyen', 'Difficile']),
-            'estimated_time_place' => Carbon::createFromFormat('H:i:s', $this->faker->time())->format('H:i'),
+            'name_place' => 'Place ' . fake()->unique()->numberBetween(1, 100),
+            'longitude_place' => fake()->longitude(),
+            'latitude_place' => fake()->latitude(),
+            'description_place' => fake()->paragraph(),
+            'image_place' => fake()->imageUrl(640, 480, 'nature'),
+            'map_place' => fake()->imageUrl(640, 480, 'maps'),
+            'distance_place' => fake()->randomFloat(1, 1, 20),
+            'difficulty_place' => fake()->randomElement(['Facile', 'Moyen', 'Difficile']),
+            'estimated_time_place' => fake()->time('H:i'),
+            'user_id' => User::inRandomOrder()->first()->id,
         ];
     }
 }
