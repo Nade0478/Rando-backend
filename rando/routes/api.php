@@ -1,19 +1,19 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ArticleController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\OpinionController;
 use App\Http\Controllers\Api\PlaceController;
 use App\Http\Controllers\Api\RoleController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\API\ImageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ImageController;
-
 
 //Route image
+Route::get('/images', [ImageController::class, 'index']);
 Route::post('/upload-image', [ImageController::class, 'upload']);
 
 

@@ -1,13 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Image;
+use App\Http\Controllers\Controller;
 
 class ImageController extends Controller
 {
+    public function index()
+    {
+        return response()->json(['message' => 'Hello from ImageController']);
+    }
+
     public function upload(Request $request)
     {
         $request->validate([
@@ -33,4 +39,3 @@ class ImageController extends Controller
         ]);
     }
 }
-
